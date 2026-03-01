@@ -26,7 +26,7 @@
 		<view class="legend">
 			<view class="legend-item" v-for="(item, idx) in options" :key="idx">
 				<view class="color-block" :style="{ backgroundColor: item.color }"></view>
-				<text>{{ item.emoji }}</text>
+				<text>{{ item.label }}</text>
 			</view>
 		</view>
 	</view>
@@ -37,37 +37,27 @@
 		data() {
 			return {
 				size: 300, // 画布尺寸（宽高）
-				radius: 120, // 转盘半径
+				radius: 140, // 转盘半径
 				center: 150, // 圆心坐标（size/2）
 				options: [{
-						emoji: '🍔',
 						color: '#FFB6C1',
 						label: '1'
 					},
 					{
-						emoji: '🍜',
 						color: '#FFD700',
 						label: '2'
 					},
 					{
-						emoji: '🍣',
 						color: '#87CEEB',
 						label: '3'
 					},
 					{
-						emoji: '🥩',
 						color: '#D2B48C',
 						label: '4'
 					},
 					{
-						emoji: '🍕',
 						color: '#FFA07A',
 						label: '5'
-					},
-					{
-						emoji: '🥗',
-						color: '#98FB98',
-						label: '6'
 					}
 				],
 				currentRotation: 0, // 当前旋转角度（度）
@@ -123,13 +113,13 @@
 					ctx.fillStyle = item.color;
 					ctx.fill();
 
-					// 在扇形中央绘制 emoji
+					// 在扇形中央绘制label
 					const midAngle = start + step / 2;
 					const textRadius = this.radius * 0.7; // 文字距圆心的距离
 					const x = this.center + Math.cos(midAngle) * textRadius;
 					const y = this.center + Math.sin(midAngle) * textRadius;
-					
-					ctx.font = 'bold 32px "PingFang SC", "Helvetica Neue", "Segoe UI Emoji", sans-serif';
+
+					ctx.font = 'bold 32px "PingFang SC", "Helvetica Neue", sans-serif';
 					ctx.fillStyle = '#2c3e50';
 					ctx.textAlign = 'center';
 					ctx.textBaseline = 'middle';
@@ -152,55 +142,73 @@
 			startSpin() {
 				if (this.animActive) return;
 
-				// 随机选择最终结果索引
-				const targetIndex = Math.floor(Math.random() * this.options.length);
-				// step代表旋转一个选项所需要的弧度
-				const step = this.angleStep;
-				// 增加多圈旋转（5-10圈）
-				const spins = 5 + Math.floor(Math.random() * 6);
-				let target = 0;
+				const step = 360 / this.options.length; // 每个扇形的角度
+				const threshold = 1; // 边界避让阈值（度），可根据需要调整
 
-				if (this.firstAnimation) {
-					// 计算目标旋转角度：
-					// 指针固定向上（0°），我们希望目标扇区的中间对准指针
-					// 扇区中间角度 = targetIndex * angleStep + angleStep/2
-					// 需要转到的角度 = -中间角度 + 360 * 圈数
-					const targetMid = targetIndex * step + step / 2;
-					target = -targetMid + spins * 360;
-					this.currentItem = targetIndex;
-					this.firstAnimation = false;
-				} else {
-					if (this.currentItem > targetIndex) {
-						//        当前角度                       当前选项和目标选项差值                额外旋转的圈
-						target = this.currentRotation + (this.currentItem - targetIndex) * step + spins * 360
-					} else {
-						target = this.currentRotation + (6 - (targetIndex - this.currentItem)) * step + spins * 360
+				// 生成目标指针角度，避开边界附近
+				let targetPointer;
+				do {
+					targetPointer = Math.random() * 360;
+					const remainder = targetPointer % step;
+					// 如果太靠近边界（距离小于阈值），则微调
+					if (remainder < threshold) {
+						targetPointer += threshold; // 向右微调
+					} else if (remainder > step - threshold) {
+						targetPointer -= threshold; // 向左微调
 					}
-					this.currentItem = targetIndex;
-				}
-				
-				// 即将旋转到的目标弧度
-				this.targetRotation = target;
+					// 确保角度在 0~360 范围内
+					targetPointer = (targetPointer + 360) % 360;
+					// 重新检查微调后的位置（防止微调后仍靠近另一边界，但概率极低，一次即可）
+					const newRemainder = targetPointer % step;
+					if (newRemainder >= threshold && newRemainder <= step - threshold) break;
+				} while (true); // 实际最多循环两次
+
+				// 计算当前指针角度（归一化到 0~360）
+				const currentPointer = ((-this.currentRotation) % 360 + 360) % 360;
+
+				// 计算需要旋转的增量（0~360），使指针从 currentPointer 转到 targetPointer
+				let delta = (targetPointer - currentPointer + 360) % 360;
+
+				// 增加随机圈数（5-10圈），让旋转更真实
+				const spins = 5 + Math.floor(Math.random() * 6);
+				delta += spins * 360;
+
+				this.targetRotation = this.currentRotation + delta;
 				this.animActive = true;
 
-				// 开启过渡动画
-				this.transitionDuration = '3s'; // 动画时长3秒
-
-				// 更新当前旋转角度，触发 CSS 过渡
+				// 触发 CSS 过渡
+				this.transitionDuration = '3s';
 				this.currentRotation = this.targetRotation;
 			},
 
 			// 动画结束处理
 			onTransitionEnd() {
-				if (!this.animActive) return; // 防止多次触发
+				if (!this.animActive) return;
 				this.animActive = false;
+				// 计算最终结果
 				this.calculateResult();
+
+				// 每次旋转后 currentRotation 不要无限增大，在动画结束后将其归一化到 0~360
+				this.transitionDuration = '0s';
+				this.$nextTick(() => {
+					this.currentRotation = this.currentRotation % 360;
+				});
 			},
 
 			// 计算并显示结果
 			calculateResult() {
-				const selected = this.options[this.currentItem];
-				this.result = `随机结果为：${selected.emoji}`;
+				// 归一化当前旋转角度
+				const effectiveRotation = this.currentRotation % 360;
+				// 指针固定向上（0°），计算指针指向的实际角度
+				let rawAngle = (-effectiveRotation) % 360;
+				if (rawAngle < 0) rawAngle += 360;
+
+				const step = 360 / this.options.length;
+				// 由于已确保指针不在边界上，可直接取整
+				const index = Math.floor(rawAngle / step) % this.options.length;
+
+				const selected = this.options[index];
+				this.result = `随机结果为：${selected.label}`;
 
 				uni.showToast({
 					title: this.result,
