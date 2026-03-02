@@ -2,15 +2,14 @@
 	<view class="container">
 		<view class="wheel-wrapper">
 			<view class="wheel-container">
-				<!-- 转盘容器 -->
+				<!-- 转盘容器：负责 CSS 旋转动画 -->
 				<view class="wheel-rotator" :style="rotatorStyle" @transitionend="onTransitionEnd">
-					<canvas type="2d" id="wheelCanvas" :style="{ width: size + 'px', height: size + 'px' }" :width="size"
+					<!-- Canvas 绘制静态转盘内容 -->
+					<canvas canvas-id="wheelCanvas" :style="{ width: size + 'px', height: size + 'px' }" :width="size"
 						:height="size"></canvas>
 				</view>
-				<!-- 固定指针 - 改用 cover-view -->
-				<view class="pointer">
-					<view class="pointer-dot"></view>
-				</view>
+				<!-- 固定指针 -->
+				<view class="pointer"></view>
 			</view>
 		</view>
 
@@ -42,31 +41,23 @@
 				center: 150, // 圆心坐标（size/2）
 				options: [{
 						color: '#FFB6C1',
-						label: '盖饭'
+						label: '1'
 					},
 					{
 						color: '#FFD700',
-						label: '汤面'
+						label: '2'
 					},
 					{
 						color: '#87CEEB',
-						label: '炒面'
+						label: '3'
 					},
 					{
 						color: '#D2B48C',
-						label: '麻辣烫'
+						label: '4'
 					},
 					{
 						color: '#FFA07A',
-						label: '肯德基'
-					},
-					{
-						color: '#87CEEB',
-						label: '粉'
-					},
-					{
-						color: '#D2B48C',
-						label: '饺子'
+						label: '5'
 					}
 				],
 				currentRotation: 0, // 当前旋转角度（度）
@@ -98,20 +89,8 @@
 		},
 		onReady() {
 			// 初始化 Canvas 绘制
-			const query = uni.createSelectorQuery();
-			query.select('#wheelCanvas')
-				.fields({
-					node: true,
-					size: true
-				})
-				.exec((res) => {
-					const canvas = res[0].node
-					const ctx = canvas.getContext('2d')
-					canvas.width = this.size;
-					canvas.height = this.size;
-					this.ctx = ctx;
-					this.drawWheel();
-				})
+			this.ctx = uni.createCanvasContext('wheelCanvas', this);
+			this.drawWheel();
 		},
 		methods: {
 			// 绘制转盘（仅执行一次）
@@ -139,21 +118,12 @@
 					const textRadius = this.radius * 0.7; // 文字距圆心的距离
 					const x = this.center + Math.cos(midAngle) * textRadius;
 					const y = this.center + Math.sin(midAngle) * textRadius;
-					// turntableX,turntableY，是在圆盘中，以圆心做坐标原点的坐标系的坐标值，用来计算文字朝向角度
-					const turntableX = x - this.radius;
-					const turntableY = y - this.radius;
-					
-					ctx.save()
-					ctx.translate(x,y)
-					ctx.rotate(Math.atan2(turntableY, turntableX) + Math.PI / 2);
-					
-					ctx.font = '16px "PingFang SC", "Helvetica Neue", sans-serif';
+
+					ctx.font = 'bold 32px "PingFang SC", "Helvetica Neue", sans-serif';
 					ctx.fillStyle = '#2c3e50';
 					ctx.textAlign = 'center';
 					ctx.textBaseline = 'middle';
-					ctx.fillText(item.label, 0, 0);
-					// ctx.fillText(item.label, x, y);
-					ctx.restore();
+					ctx.fillText(item.label, x, y);
 				});
 
 				// 绘制中心小圆（覆盖指针起始点）
@@ -165,7 +135,7 @@
 				ctx.lineWidth = 2;
 				ctx.stroke();
 
-				// ctx.draw();
+				ctx.draw();
 			},
 
 			// 开始旋转
@@ -282,7 +252,6 @@
 
 	.wheel-rotator {
 		position: absolute;
-		z-index: 10;
 		top: 0;
 		left: 0;
 		width: 300px;
@@ -307,26 +276,23 @@
 		transform: translate(-50%, -100%);
 		width: 0;
 		height: 0;
-		border-left: 10px solid transparent;
-		border-right: 10px solid transparent;
-		border-bottom: 50px solid #e74c3c;
+		border-left: 20px solid transparent;
+		border-right: 20px solid transparent;
+		border-bottom: 35px solid #e74c3c;
 		z-index: 20;
 		filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.2));
-		overflow: inherit;
 	}
 
-	/* 新增的圆点样式，替代原来的 .pointer::after */
-	.pointer-dot {
+	.pointer::after {
+		content: '';
 		position: absolute;
-		top: 40px;
-		left: -10px;
-		width: 20px;
-		height: 20px;
+		top: 30px;
+		left: -8px;
+		width: 16px;
+		height: 16px;
 		background: #f1c40f;
 		border-radius: 50%;
 		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-		/* 确保它在指针上方 */
-		z-index: 21;
 	}
 
 	.info {

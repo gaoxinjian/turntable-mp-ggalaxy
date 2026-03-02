@@ -12,31 +12,23 @@ const _sfc_main = {
       options: [
         {
           color: "#FFB6C1",
-          label: "盖饭"
+          label: "1"
         },
         {
           color: "#FFD700",
-          label: "汤面"
+          label: "2"
         },
         {
           color: "#87CEEB",
-          label: "炒面"
+          label: "3"
         },
         {
           color: "#D2B48C",
-          label: "麻辣烫"
+          label: "4"
         },
         {
           color: "#FFA07A",
-          label: "肯德基"
-        },
-        {
-          color: "#87CEEB",
-          label: "粉"
-        },
-        {
-          color: "#D2B48C",
-          label: "饺子"
+          label: "5"
         }
       ],
       currentRotation: 0,
@@ -71,18 +63,8 @@ const _sfc_main = {
     }
   },
   onReady() {
-    const query = common_vendor.index.createSelectorQuery();
-    query.select("#wheelCanvas").fields({
-      node: true,
-      size: true
-    }).exec((res) => {
-      const canvas = res[0].node;
-      const ctx = canvas.getContext("2d");
-      canvas.width = this.size;
-      canvas.height = this.size;
-      this.ctx = ctx;
-      this.drawWheel();
-    });
+    this.ctx = common_vendor.index.createCanvasContext("wheelCanvas", this);
+    this.drawWheel();
   },
   methods: {
     // 绘制转盘（仅执行一次）
@@ -105,17 +87,11 @@ const _sfc_main = {
         const textRadius = this.radius * 0.7;
         const x = this.center + Math.cos(midAngle) * textRadius;
         const y = this.center + Math.sin(midAngle) * textRadius;
-        const turntableX = x - this.radius;
-        const turntableY = y - this.radius;
-        ctx.save();
-        ctx.translate(x, y);
-        ctx.rotate(Math.atan2(turntableY, turntableX) + Math.PI / 2);
-        ctx.font = '16px "PingFang SC", "Helvetica Neue", sans-serif';
+        ctx.font = 'bold 32px "PingFang SC", "Helvetica Neue", sans-serif';
         ctx.fillStyle = "#2c3e50";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText(item.label, 0, 0);
-        ctx.restore();
+        ctx.fillText(item.label, x, y);
       });
       ctx.beginPath();
       ctx.arc(this.center, this.center, 20, 0, 2 * Math.PI);
@@ -124,6 +100,7 @@ const _sfc_main = {
       ctx.strokeStyle = "#cccccc";
       ctx.lineWidth = 2;
       ctx.stroke();
+      ctx.draw();
     },
     // 开始旋转
     startSpin() {
@@ -210,6 +187,6 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     })
   });
 }
-const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-1cf27b2a"]]);
+const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-feb90db2"]]);
 wx.createPage(MiniProgramPage);
-//# sourceMappingURL=../../../.sourcemap/mp-weixin/pages/index/index.js.map
+//# sourceMappingURL=../../../.sourcemap/mp-weixin/pages/LastVersion/LastVersion.js.map

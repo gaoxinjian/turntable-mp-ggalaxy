@@ -1,5 +1,5 @@
 
-.container.data-v-1cf27b2a {
+.container.data-v-feb90db2 {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -9,21 +9,20 @@
 		padding: 20px 0;
 		box-sizing: border-box;
 }
-.wheel-wrapper.data-v-1cf27b2a {
+.wheel-wrapper.data-v-feb90db2 {
 		background: #ffffff;
 		border-radius: 50%;
 		padding: 15px;
 		box-shadow: 0 20px 30px rgba(0, 0, 0, 0.15), 0 6px 12px rgba(0, 0, 0, 0.1);
 		margin-bottom: 30px;
 }
-.wheel-container.data-v-1cf27b2a {
+.wheel-container.data-v-feb90db2 {
 		position: relative;
 		width: 300px;
 		height: 300px;
 }
-.wheel-rotator.data-v-1cf27b2a {
+.wheel-rotator.data-v-feb90db2 {
 		position: absolute;
-		z-index: 10;
 		top: 0;
 		left: 0;
 		width: 300px;
@@ -41,40 +40,36 @@
 }
 
 	/* 固定指针 */
-.pointer.data-v-1cf27b2a {
+.pointer.data-v-feb90db2 {
 		position: absolute;
 		top: 50%;
 		left: 50%;
 		transform: translate(-50%, -100%);
 		width: 0;
 		height: 0;
-		border-left: 10px solid transparent;
-		border-right: 10px solid transparent;
-		border-bottom: 50px solid #e74c3c;
+		border-left: 20px solid transparent;
+		border-right: 20px solid transparent;
+		border-bottom: 35px solid #e74c3c;
 		z-index: 20;
 		filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.2));
-		overflow: inherit;
 }
-
-	/* 新增的圆点样式，替代原来的 .pointer::after */
-.pointer-dot.data-v-1cf27b2a {
+.pointer.data-v-feb90db2::after {
+		content: '';
 		position: absolute;
-		top: 40px;
-		left: -10px;
-		width: 20px;
-		height: 20px;
+		top: 30px;
+		left: -8px;
+		width: 16px;
+		height: 16px;
 		background: #f1c40f;
 		border-radius: 50%;
 		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-		/* 确保它在指针上方 */
-		z-index: 21;
 }
-.info.data-v-1cf27b2a {
+.info.data-v-feb90db2 {
 		min-height: 50px;
 		margin: 10px 0 20px;
 		text-align: center;
 }
-.result.data-v-1cf27b2a {
+.result.data-v-feb90db2 {
 		font-size: 24px;
 		font-weight: bold;
 		color: #2c3e50;
@@ -84,12 +79,12 @@
 		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 		display: inline-block;
 }
-.hint.data-v-1cf27b2a {
+.hint.data-v-feb90db2 {
 		font-size: 18px;
 		color: #7f8c8d;
 		font-style: italic;
 }
-.spin-btn.data-v-1cf27b2a {
+.spin-btn.data-v-feb90db2 {
 		width: 220px;
 		height: 50px;
 		line-height: 50px;
@@ -102,12 +97,12 @@
 		border: none;
 		margin-bottom: 30px;
 }
-.spin-btn[disabled].data-v-1cf27b2a {
+.spin-btn[disabled].data-v-feb90db2 {
 		background: #bdc3c7;
 		box-shadow: none;
 		opacity: 0.6;
 }
-.legend.data-v-1cf27b2a {
+.legend.data-v-feb90db2 {
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: center;
@@ -118,14 +113,14 @@
 		-webkit-backdrop-filter: blur(5px);
 		        backdrop-filter: blur(5px);
 }
-.legend-item.data-v-1cf27b2a {
+.legend-item.data-v-feb90db2 {
 		display: flex;
 		align-items: center;
 		gap: 6px;
 		font-size: 18px;
 		color: #2c3e50;
 }
-.color-block.data-v-1cf27b2a {
+.color-block.data-v-feb90db2 {
 		width: 24px;
 		height: 24px;
 		border-radius: 8px;

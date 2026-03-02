@@ -6067,7 +6067,7 @@ function populateParameters(fromRes, toRes) {
   let _SDKVersion = SDKVersion;
   const hostLanguage = (language || "").replace(/_/g, "-");
   const parameters = {
-    appId: "",
+    appId: "__UNI__F1B7BC6",
     appName: "七幺三",
     appVersion: "1.0.0",
     appVersionCode: "100",
@@ -6216,7 +6216,7 @@ const getAppBaseInfo = {
       hostName: _hostName,
       hostSDKVersion: SDKVersion,
       hostTheme: theme,
-      appId: "",
+      appId: "__UNI__F1B7BC6",
       appName: "七幺三",
       appVersion: "1.0.0",
       appVersionCode: "100",
@@ -6971,7 +6971,7 @@ function isConsoleWritable() {
 function initRuntimeSocketService() {
   const hosts = "127.0.0.1,192.168.1.5";
   const port = "8090";
-  const id = "mp-weixin_lgoKY-";
+  const id = "mp-weixin_Noa5V8";
   const lazy = typeof swan !== "undefined";
   let restoreError = lazy ? () => {
   } : initOnError();
